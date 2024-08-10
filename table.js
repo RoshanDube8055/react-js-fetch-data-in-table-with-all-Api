@@ -386,6 +386,7 @@
 // export default Table;
 
 
+
 import React, { useEffect, useState } from "react";
 import { FaTrash, FaEdit } from 'react-icons/fa';
 import './Table.css';
@@ -469,31 +470,43 @@ const Table = () => {
         const newUser = {
             userId,
             username,
-            firstName,
-            lastName,
+            FirstName: firstName,
+            LastName: lastName,
             email,
             mobile,
         };
-
+        data.push(newUser);
+         setData(data);
         try {
             const response = await fetch(`${BASE_URL}/AddNewUser`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
                 },
-                body: JSON.stringify(newUser)
+                body: JSON.stringify(result2)
             });
 
             if (!response.ok) {
-                throw new Error('Data was not fetched successfully');
+                throw new Error('Failed to add new user');
             }
 
             const result = await response.json();
-            console.log(result);
-            setData([...data, result]);
+            console.log('New user added:', result);
+
+            // Add the newly added user to the local data state
+            setData(prevData => [...prevData, result]);
+
+            // Clear the form fields after adding the user
+            setUserId('');
+            setUsername('');
+            setFirstName('');
+            setLastName('');
+            setEmail('');
+            setMobile('');
+
             handleClose();
         } catch (error) {
-            console.error('Error:', error);
+            console.error('Error adding user:', error);
         }
     };
 
@@ -506,6 +519,9 @@ const Table = () => {
             email,
             mobile,
         };
+
+        data.push(updatedUser);
+        setData(data);
 
         try {
             const response = await fetch(`${BASE_URL}/${userId}`, {
@@ -548,6 +564,15 @@ const Table = () => {
         }
     };
 
+
+    const result2 = {
+                "username": username,
+                 "email": email,
+                 "LastName": lastName,
+                 "FirstName": firstName,
+                 "mobile": mobile
+            }
+
     return (
         <>
             <Card>
@@ -561,7 +586,7 @@ const Table = () => {
                         className="search-input"
                     />
                     <button onClick={fetchData}>Search</button>
-                    <button className="btn btn-outline-primary" onClick={handleShow}>AddUser</button>
+                    <button className="btn btn-outline-primary" onClick={handleShow}>Add User</button>
                     <br />&nbsp;
                     <div>
                         <table className="compact-table">
@@ -611,17 +636,17 @@ const Table = () => {
                         <form onSubmit={e => e.preventDefault()}>
                             <div style={{ width: '100%' }}>
                                 <label>ID</label><br />
-                                <input type='text' style={{ width: '100%' }} placeholder="Enter the ID" onChange={e => setUserId(e.target.value)} required /><br /><br />
+                                <input type='text' style={{ width: '100%' }} placeholder="Enter the ID" value={userId} onChange={e => setUserId(e.target.value)} required /><br /><br />
                                 <label>FirstName</label><br />
-                                <input type='text' style={{ width: '100%' }} placeholder="Enter the FirstName" onChange={e => setFirstName(e.target.value)} required /><br /><br />
+                                <input type='text' style={{ width: '100%' }} placeholder="Enter the FirstName" value={firstName} onChange={e => setFirstName(e.target.value)} required /><br /><br />
                                 <label>LastName</label><br />
-                                <input type='text' style={{ width: '100%' }} placeholder="Enter the LastName" onChange={e => setLastName(e.target.value)} required /><br /><br />
+                                <input type='text' style={{ width: '100%' }} placeholder="Enter the LastName" value={lastName} onChange={e => setLastName(e.target.value)} required /><br /><br />
                                 <label>Username</label><br />
-                                <input type='text' style={{ width: '100%' }} placeholder="Enter the Username" onChange={e => setUsername(e.target.value)} required /><br /><br />
+                                <input type='text' style={{ width: '100%' }} placeholder="Enter the Username" value={username} onChange={e => setUsername(e.target.value)} required /><br /><br />
                                 <label>Email</label><br />
-                                <input type="email" style={{ width: '100%' }} placeholder="Enter the Email" onChange={e => setEmail(e.target.value)} required /><br /><br />
+                                <input type="email" style={{ width: '100%' }} placeholder="Enter the Email" value={email} onChange={e => setEmail(e.target.value)} required /><br /><br />
                                 <label>Mobile</label><br />
-                                <input type='tel' style={{ width: '100%' }} placeholder="Enter the Mobile" onChange={e => setMobile(e.target.value)} required /><br /><br />
+                                <input type='tel' style={{ width: '100%' }} placeholder="Enter the Mobile" value={mobile} onChange={e => setMobile(e.target.value)} required /><br /><br />
                             </div>
                         </form>
                     </ModalBody>
@@ -643,17 +668,17 @@ const Table = () => {
                         <form onSubmit={e => e.preventDefault()}>
                             <div style={{ width: '100%' }}>
                                 <label>ID</label><br />
-                                <input type='text' style={{ width: '100%' }} value={userId} readOnly /><br /><br />
+                                <input type='text' style={{ width: '100%' }} placeholder="Enter the ID" value={userId} onChange={e => setUserId(e.target.value)} required /><br /><br />
                                 <label>FirstName</label><br />
-                                <input type='text' style={{ width: '100%' }} value={firstName} onChange={e => setFirstName(e.target.value)} required /><br /><br />
+                                <input type='text' style={{ width: '100%' }} placeholder="Enter the FirstName" value={firstName} onChange={e => setFirstName(e.target.value)} required /><br /><br />
                                 <label>LastName</label><br />
-                                <input type='text' style={{ width: '100%' }} value={lastName} onChange={e => setLastName(e.target.value)} required /><br /><br />
+                                <input type='text' style={{ width: '100%' }} placeholder="Enter the LastName" value={lastName} onChange={e => setLastName(e.target.value)} required /><br /><br />
                                 <label>Username</label><br />
-                                <input type='text' style={{ width: '100%' }} value={username} onChange={e => setUsername(e.target.value)} required /><br /><br />
+                                <input type='text' style={{ width: '100%' }} placeholder="Enter the Username" value={username} onChange={e => setUsername(e.target.value)} required /><br /><br />
                                 <label>Email</label><br />
-                                <input type="email" style={{ width: '100%' }} value={email} onChange={e => setEmail(e.target.value)} required /><br /><br />
+                                <input type="email" style={{ width: '100%' }} placeholder="Enter the Email" value={email} onChange={e => setEmail(e.target.value)} required /><br /><br />
                                 <label>Mobile</label><br />
-                                <input type='tel' style={{ width: '100%' }} value={mobile} onChange={e => setMobile(e.target.value)} required /><br /><br />
+                                <input type='tel' style={{ width: '100%' }} placeholder="Enter the Mobile" value={mobile} onChange={e => setMobile(e.target.value)} required /><br /><br />
                             </div>
                         </form>
                     </ModalBody>
@@ -672,6 +697,7 @@ const Table = () => {
 };
 
 export default Table;
+
 
 
 
